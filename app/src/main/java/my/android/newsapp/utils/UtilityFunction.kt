@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+// This function formats the given date string to a specified format ("dd-MM-yyyy HH:mm:ss").
 @RequiresApi(Build.VERSION_CODES.O)
 fun dateFormater(date:String) : String{
     val inputFormatter = DateTimeFormatter.ISO_DATE_TIME

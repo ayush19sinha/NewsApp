@@ -23,6 +23,9 @@ fun ErrorScreen(
     onRetry: () -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
+
+    /* Using LaunchedEffect to ensure that the focus is automatically moved to the retry button
+     whenever this composable is composed */
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }

@@ -48,6 +48,7 @@ fun HeadlineCard(article: Article) {
                 .padding(16.dp)
                 .focusable()
         ) {
+            // Using Coil to load image associated with the article
             AsyncImage(
                 model = article.urlToImage,
                 contentDescription = "Article Image",

@@ -1,9 +1,11 @@
 package my.android.newsapp
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -16,6 +18,7 @@ import my.android.newsapp.ui.viewmodel.HomeViewmodel
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val homeViewmodel :HomeViewmodel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

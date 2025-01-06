@@ -75,7 +75,7 @@ fun HomeScreen(viewModel: HomeViewmodel) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(Color.Black)
                 .onPreviewKeyEvent { keyEvent ->
                     if (keyEvent.key == Key.DirectionDown) {
                         when (keyEvent.type) {
@@ -142,7 +142,7 @@ fun NewsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color.Black)
     ) {
         focusedArticle?.let { article ->
             FeaturedNewsCard(
@@ -273,7 +273,8 @@ fun TabCategorySelector(
     selectedCategory: Int,
     onCategorySelected: (Int) -> Unit,
 ) {
-    TabRow(selectedTabIndex = selectedCategory) {
+    TabRow(selectedTabIndex = selectedCategory,
+        contentColor = Color.Black ) {
         categories.forEachIndexed { index, tab ->
             key(index) {
                 Tab(
@@ -295,8 +296,7 @@ fun TabCategorySelector(
 @Composable
 fun EmptyResult() {
     Box(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.Black),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(

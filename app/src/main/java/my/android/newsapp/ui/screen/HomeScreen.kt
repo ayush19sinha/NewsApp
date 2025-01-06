@@ -23,6 +23,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,10 +31,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +49,9 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.IconButton
 import androidx.tv.material3.TabRow
 import androidx.tv.material3.Text
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import my.android.newsapp.R
 import my.android.newsapp.data.model.Article
 import my.android.newsapp.ui.component.ErrorScreen
@@ -58,12 +68,33 @@ fun HomeScreen(viewModel: HomeViewmodel) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val selectedCountry by viewModel.selectedCountry.collectAsState()
+    var keyPressJob by remember { mutableStateOf<Job?>(null) }
+    val scope = rememberCoroutineScope()
 
     NewsAppTheme {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .onPreviewKeyEvent { keyEvent ->
+                    if (keyEvent.key == Key.DirectionDown) {
+                        when (keyEvent.type) {
+                            KeyEventType.KeyDown -> {
+                                keyPressJob = scope.launch {
+                                    delay(4000)
+                                    viewModel.loadHeadlines()
+                                }
+                                false
+                            }
+                            KeyEventType.KeyUp -> {
+                                keyPressJob?.cancel()
+                                keyPressJob = null
+                                false
+                            }
+                            else -> false
+                        }
+                    } else false
+                }
         ) {
             when (val state = uiState) {
                 is NewsUiState.Loading -> LoadingScreen()
@@ -73,7 +104,6 @@ fun HomeScreen(viewModel: HomeViewmodel) {
                     selectedCategory = selectedCategory,
                     selectedCountry = selectedCountry
                 )
-
                 is NewsUiState.Error -> ErrorScreen(
                     message = state.message,
                     onRetry = viewModel::loadHeadlines
@@ -174,7 +204,8 @@ fun NewsScreen(
 
                     DropdownMenu(
                         expanded = showDropdown,
-                        onDismissRequest = { showDropdown = false }
+                        onDismissRequest = { showDropdown = false },
+                        containerColor = Color.Black
                     ) {
                         DropdownMenuItem(
                             text = { Text("Change Country") },
@@ -190,6 +221,7 @@ fun NewsScreen(
                         countryWithCodes.forEach { (country, code) ->
                             DropdownMenuItem(
                                 text = { Text(country) },
+                                colors = MenuDefaults.itemColors(textColor = Color.Gray),
                                 onClick = {
                                     currentCountry = country
                                     viewModel.updateCountry(code)
@@ -263,7 +295,8 @@ fun TabCategorySelector(
 @Composable
 fun EmptyResult() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
         Text(
